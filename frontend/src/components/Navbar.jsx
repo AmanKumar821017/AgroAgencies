@@ -53,7 +53,7 @@ export default function Navbar() {
         className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 px-3 py-3 sm:px-4"
       >
         <Link to="/" className="text-xl font-bold tracking-tight text-white">
-          Agro<span className="text-green-400">Agencies</span>
+          Axano<span className="text-green-400">Agro</span>
         </Link>
 
         {!isFarmer && (
@@ -120,7 +120,7 @@ export default function Navbar() {
                       onClick={() => { setPincode(""); setOpenMenu(null); }}
                       className="text-gray-500"
                     >
-                      Hatao
+                      Cancel
                     </button>
                     <button onClick={() => setOpenMenu(null)} className="font-medium text-green-700">
                       Done

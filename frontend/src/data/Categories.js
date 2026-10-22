@@ -1,5 +1,5 @@
 export const categories = [
-  { name: "Sabzi", emoji: "🥬" },
+  { name: "Sabzi", emoji: "vegetable.png" },
   { name: "Phal", emoji: "🍎" },
   { name: "Dal", emoji: "🫘" },
   { name: "Masale", emoji: "🧂" },
