@@ -47,13 +47,13 @@ export default function Navbar() {
     "rounded-lg bg-green-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-green-500";
 
   return (
-    <header className="sticky top-0 z-50 bg-black">
+    <header className="sticky  top-0 z-50 bg-yellow-400">
       <div
         ref={wrapRef}
         className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 px-3 py-3 sm:px-4"
       >
-        <Link to="/" className="text-xl font-bold tracking-tight text-white">
-          Axano<span className="text-green-400">Agro</span>
+        <Link to="/" className="text-2xl font-bold tracking-tight text-green-400">
+          Axano<span className="text-black">Agro</span>
         </Link>
 
         {!isFarmer && (
@@ -64,7 +64,7 @@ export default function Navbar() {
               placeholder="Crop search karo (wheat, gehu, sabzi...)"
               className="w-full px-3 py-2 text-sm outline-none"
             />
-            <span className="flex items-center bg-green-600 px-3 text-white">
+            <span className="flex items-center bg-green-600 px-3 text-black">
               <Icon className="h-5 w-5">
                 <circle cx="11" cy="11" r="7" />
                 <path d="M21 21l-4.3-4.3" />

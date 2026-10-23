@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
+import bg from "../assets/agro.png"
 
 const greet = () => {
   const h = new Date().getHours();
@@ -63,31 +64,67 @@ export default function FarmerHome() {
   ];
 
   return (
-    <div className="mx-auto max-w-5xl space-y-5 p-3 pb-10 sm:p-4">
-      {/* Hero */}
-      <section className="rounded-2xl bg-linear-to-r from-green-700 to-green-500 p-5 text-white sm:p-8">
-        <p className="text-sm opacity-90">{greet()} 🙏</p>
-        <h1 className="text-2xl font-extrabold sm:text-3xl">{user?.name}</h1>
-        <p className="mt-1 text-sm opacity-95">
-          {loading
-            ? "Aapka hisaab load ho raha hai..."
-            : pendingOrders.length > 0
-            ? `Aapke ${pendingOrders.length} naye order aaye hain, jaldi dekh lo.`
-            : "Abhi koi naya order nahi. Stock aur daam check kar lo."}
-        </p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Link to="/farmer?tab=orders" className="rounded-lg bg-white px-5 py-2 text-sm font-semibold text-green-700">
-            Orders dekho
-            {pendingOrders.length > 0 && (
-              <span className="ml-2 rounded-full bg-red-600 px-2 py-0.5 text-xs text-white">
-                {pendingOrders.length}
-              </span>
-            )}
-          </Link>
-          <Link to="/farmer?tab=crops&new=1" className="rounded-lg border border-white px-5 py-2 text-sm font-semibold">
-            + Nayi crop jodo
-          </Link>
+    <div className="mx-auto max-w-6xl space-y-6 p-3 pb-10 sm:p-4">
+      {/* Hero banner */}
+      {/* Hero banner */}
+      <section className="relative overflow-hidden rounded-2xl">
+
+        {/* Background Image */}
+        <img
+          src={bg}
+          alt="Fresh crops from farms"
+          className="h-80 w-full object-cover sm:h-95"
+        />
+
+        {/* Dark overlay for text visibility */}
+        <div className="absolute inset-0 bg-black/20"></div>
+
+        {/* Content on Image */}
+        <div className="absolute inset-0 flex items-center">
+          <div className="p-6 text-white sm:p-10">
+
+            <p className="text-sm font-medium opacity-90 sm:text-base">
+              {greet()} 🙏
+            </p>
+
+            <h1 className="mt-1 text-2xl font-extrabold sm:text-3xl">
+              {user?.name}
+            </h1>
+
+            <p className="mt-1 max-w-xl text-sm opacity-95">
+              {loading
+                ? "Aapka hisaab load ho raha hai..."
+                : pendingOrders.length > 0
+                  ? `Aapke ${pendingOrders.length} naye order aaye hain, jaldi dekh lo.`
+                  : "Abhi koi naya order nahi. Stock aur daam check kar lo."}
+            </p>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+
+              <Link
+                to="/farmer?tab=orders"
+                className="rounded-lg bg-white px-5 py-2 text-sm font-semibold text-green-700 shadow-sm transition hover:bg-green-50"
+              >
+                Orders dekho
+
+                {pendingOrders.length > 0 && (
+                  <span className="ml-2 rounded-full bg-red-600 px-2 py-0.5 text-xs text-white">
+                    {pendingOrders.length}
+                  </span>
+                )}
+              </Link>
+
+              <Link
+                to="/farmer?tab=crops&new=1"
+                className="rounded-lg border border-white px-5 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                + Nayi crop jodo
+              </Link>
+
+            </div>
+          </div>
         </div>
+
       </section>
 
       {/* Stats */}

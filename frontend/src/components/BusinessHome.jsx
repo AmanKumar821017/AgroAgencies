@@ -6,10 +6,31 @@ import CropCard from "./CropCard";
 import { categories } from "../data/Categories";
 import useDeliveryCheck from "../hooks/useDeliveryCheck";
 import { useDelivery } from "../context/DeliveryContext";
+import bg from "../assets/agro.png"
 
 
-
-// bulk deals wali card
+const categoryMap = {
+  wheat: "Gehu",
+  rice: "Chawal",
+  corn: "Makka",
+  maize: "Makka",
+  potato: "Aloo",
+  onion: "Pyaz",
+  tomato: "Tamatar",
+  chilli: "Mirch",
+  chili: "Mirch",
+  mango: "Aam",
+  banana: "Kela",
+  fruits: "Phal",
+  fruit: "Phal",
+  vegetables: "Sabzi",
+  vegetable: "Sabzi",
+  spices: "Masale",
+  spice: "Masale",
+  pulses: "Dal",
+  pulse: "Dal",
+  dal: "Dal",
+};
 
 
 const statusBadge = {
@@ -85,26 +106,53 @@ export default function BusinessHome() {
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-3 pb-10 sm:p-4">
       {/* Hero */}
-      <section className="rounded-2xl bg-linear-to-r from-green-700 to-green-500 p-5 text-white sm:p-8">
-        <p className="text-sm opacity-90">Namaste, {user?.name} 🙏</p>
-        <h1 className="mt-1 text-2xl font-extrabold leading-tight sm:text-3xl">
-          Bulk mein kharido, seedha kisan se
-        </h1>
-        <p className="mt-1 text-sm opacity-95">
-          Jo chahiye wo requirement mein likho, kisan khud aapse sampark karenge.
-        </p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Link to="/requirements?new=1" className="rounded-lg bg-white px-5 py-2 text-sm font-semibold text-green-700">
-            + Requirement dalo
-          </Link>
-          <Link to="/?all=1" className="rounded-lg border border-white px-5 py-2 text-sm font-semibold">
-            Sabhi crops dekho
-          </Link>
-          <Link to="/stock" className="rounded-lg border border-white px-5 py-2 text-sm font-semibold">
-            📍 Zila-wise stock
-          </Link>
+      <section className="relative min-h-[320px] overflow-hidden rounded-2xl sm:min-h-[360px]">
+        {/* Background Image */}
+        <img
+          src={bg}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+
+        {/* Dark/Green Overlay */}
+        <div className="absolute inset-0 bg-green-900/45"></div>
+
+        {/* Hero Content */}
+        <div className="relative z-10 flex min-h-[320px] items-center p-5 text-white sm:min-h-[360px] sm:p-8">
+          <div className="max-w-2xl">
+            <p className="text-sm font-medium opacity-90 sm:text-base">
+              Namaste, {user?.name} 🙏
+            </p>
+
+            <h1 className="mt-1 text-2xl font-extrabold leading-tight sm:text-4xl">
+              Bulk mein kharido, seedha kisan se
+            </h1>
+
+            <p className="mt-2 max-w-xl text-sm leading-6 opacity-95 sm:text-base">
+              Jo chahiye wo requirement mein likho, kisan khud aapse sampark
+              karenge.
+            </p>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Link
+                to="/requirements?new=1"
+                className="rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-green-700 shadow-sm transition hover:bg-green-50"
+              >
+                + Requirement dalo
+              </Link>
+
+              <Link
+                to="/?all=1"
+                className="rounded-lg border border-white/80 bg-white/10 px-5 py-2.5 text-sm font-semibold backdrop-blur-sm transition hover:bg-white/20"
+              >
+                Sabhi crops dekho
+              </Link>
+
+            </div>
+          </div>
         </div>
       </section>
+
 
       {/* Naye jawab ka alert */}
       {newReplies > 0 && (
@@ -135,7 +183,15 @@ export default function BusinessHome() {
           {categories.map((c) => (
             <Link key={c.name} to={`/?search=${encodeURIComponent(c.name)}`}
               className="flex flex-col items-center gap-1 rounded-xl bg-green-50 p-3 text-center transition hover:bg-green-100">
-              <span className="text-3xl sm:text-4xl">{c.emoji}</span>
+              {c.image ? (
+                <img
+                  src={c.image}
+                  alt={c.name}
+                  className="h-12 w-12 object-contain sm:h-14 sm:w-14"
+                />
+              ) : (
+                <span className="text-3xl sm:text-4xl">{c.emoji}</span>
+              )}
               <span className="text-xs font-medium text-gray-800 sm:text-sm">{c.name}</span>
             </Link>
           ))}
@@ -189,16 +245,57 @@ export default function BusinessHome() {
       {/* Pehle kharidi crops */}
       {past.length > 0 && (
         <section>
-          <h2 className="mb-2 font-bold">Dobara kharido</h2>
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            {past.slice(0, 8).map((c) => (
-              <Link key={c._id} to={`/crops/${c._id}`}
-                className="shrink-0 rounded-full border bg-white px-4 py-1.5 text-sm font-medium hover:bg-green-50">
-                🌾 {c.name}
-              </Link>
-            ))}
+          <h2 className="mb-2 font-bold">
+            Dobara kharido
+          </h2>
+
+          <div className="flex gap-3 overflow-x-auto pb-2">
+            {past.slice(0, 8).map((c) => {
+              const categoryName =
+                categoryMap[
+                c.name?.trim().toLowerCase()
+                ] || c.name;
+
+              const category = categories.find(
+                (cat) =>
+                  cat.name.toLowerCase() ===
+                  categoryName?.toLowerCase()
+              );
+
+              return (
+                <Link
+                  key={c._id}
+                  to={`/crops/${c._id}`}
+                  className="flex w-24 shrink-0 flex-col items-center rounded-xl border bg-white p-2 transition hover:border-green-300 hover:bg-green-50"
+                >
+                  {/* Category Image */}
+                  <div
+                    className={`flex h-16 w-16 items-center justify-center overflow-hidden rounded-lg ${category?.bg || "bg-green-50"
+                      }`}
+                  >
+                    {category?.image ? (
+                      <img
+                        src={category.image}
+                        alt={c.name}
+                        className="h-full w-full object-contain p-1"
+                      />
+                    ) : (
+                      <span className="text-3xl">
+                        🌾
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Crop Name */}
+                  <span className="mt-1.5 line-clamp-1 w-full text-center text-xs font-semibold text-gray-700">
+                    {c.name}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </section>
+
       )}
     </div>
   );

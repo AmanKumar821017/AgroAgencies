@@ -5,13 +5,39 @@ import { useAuth } from "../context/AuthContext";
 import { useDelivery } from "../context/DeliveryContext";
 import useDeliveryCheck from "../hooks/useDeliveryCheck";
 import api from "../api";
+import { categories } from "../data/Categories";
 
 const DELIVERY_FREE_ABOVE = 500;
 const DELIVERY_FEE = 40;
 
+// Backend crop name -> Categories.js name
+const categoryMap = {
+  wheat: "Gehu",
+  rice: "Chawal",
+  corn: "Makka",
+  maize: "Makka",
+  potato: "Aloo",
+  onion: "Pyaz",
+  tomato: "Tamatar",
+  chilli: "Mirch",
+  chili: "Mirch",
+  mango: "Aam",
+  banana: "Kela",
+  fruits: "Phal",
+  fruit: "Phal",
+  vegetables: "Sabzi",
+  vegetable: "Sabzi",
+  spices: "Masale",
+  spice: "Masale",
+  pulses: "Dal",
+  pulse: "Dal",
+  dal: "Dal",
+};
+
 function dateText(days = 3) {
   const d = new Date();
   d.setDate(d.getDate() + days);
+
   return d.toLocaleDateString("en-IN", {
     weekday: "short",
     day: "numeric",
@@ -25,6 +51,7 @@ export default function Cart() {
   const navigate = useNavigate();
 
   const [editing, setEditing] = useState(false);
+
   const [address, setAddress] = useState({
     name: "",
     phone: "",
@@ -32,6 +59,7 @@ export default function Cart() {
     fullAddress: "",
     pincode: "",
   });
+
   const [placing, setPlacing] = useState(false);
   const [error, setError] = useState("");
 
@@ -53,7 +81,10 @@ export default function Cart() {
       setAddress((a) =>
         a.pincode
           ? a
-          : { ...a, pincode: savedPin }
+          : {
+              ...a,
+              pincode: savedPin,
+            }
       );
     }
   }, [savedPin]);
@@ -114,6 +145,7 @@ export default function Cart() {
     }
 
     setError("");
+
     localStorage.setItem(
       "address",
       JSON.stringify(address)
@@ -165,11 +197,13 @@ export default function Cart() {
           cropId: i._id,
           quantity: i.qty,
         })),
+
         address: `${address.fullAddress}, ${address.city}${
           address.pincode
             ? " - " + address.pincode
             : ""
         }`,
+
         phone: address.phone,
         pincode: address.pincode,
       });
@@ -191,12 +225,15 @@ export default function Cart() {
     return (
       <div className="mx-auto max-w-md p-10 text-center">
         <div className="text-6xl">🛒</div>
+
         <h1 className="mt-3 text-xl font-bold">
           Aapka cart khaali hai
         </h1>
+
         <p className="mt-1 text-sm text-gray-500">
           Taaza crops dekho aur cart mein daalo.
         </p>
+
         <Link
           to="/?all=1"
           className="mt-5 inline-block rounded-lg bg-green-600 px-6 py-2 font-semibold text-white"
@@ -220,7 +257,9 @@ export default function Cart() {
       </h1>
 
       <div className="grid gap-4 lg:grid-cols-3">
+        {/* LEFT */}
         <div className="space-y-4 lg:col-span-2">
+
           {/* Delivery Address */}
           <section className="rounded-xl border bg-white p-4 shadow-sm">
             <div className="flex items-start justify-between">
@@ -244,6 +283,7 @@ export default function Cart() {
                   <p className="font-semibold">
                     {address.name} • {address.phone}
                   </p>
+
                   <p>
                     {address.fullAddress},{" "}
                     {address.city} {address.pincode}
@@ -351,110 +391,134 @@ export default function Cart() {
 
           {/* Cart Items */}
           <section className="rounded-xl border bg-white shadow-sm">
-            {items.map((i) => (
-              <div
-                key={i._id}
-                className="flex gap-3 border-b p-3 last:border-b-0"
-              >
-                <Link
-                  to={`/crops/${i._id}`}
-                  className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-green-50 sm:h-24 sm:w-24"
-                >
-                  {i.image ? (
-                    <img
-                      src={i.image}
-                      alt={i.name}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-3xl">
-                      🌾
-                    </span>
-                  )}
-                </Link>
+            {items.map((i) => {
+              // ------------------------------------
+              // Category image find karo
+              // ------------------------------------
+              const categoryName =
+                categoryMap[
+                  i.name?.trim().toLowerCase()
+                ] || i.name;
 
-                <div className="flex flex-1 flex-col justify-between">
-                  <div>
-                    <div className="flex justify-between gap-2">
-                      <h3 className="font-semibold">
-                        {i.name}
-                      </h3>
-                      <p className="font-bold">
-                        ₹{i.qty * i.price}
+              const category = categories.find(
+                (c) =>
+                  c.name.toLowerCase() ===
+                  categoryName?.toLowerCase()
+              );
+
+              return (
+                <div
+                  key={i._id}
+                  className="flex gap-3 border-b p-3 last:border-b-0"
+                >
+                  {/* CATEGORY IMAGE */}
+                  <Link
+                    to={`/crops/${i._id}`}
+                    className={`flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg ${
+                      category?.bg || "bg-green-50"
+                    } sm:h-24 sm:w-24`}
+                  >
+                    {category?.image ? (
+                      <img
+                        src={category.image}
+                        alt={i.name}
+                        className="h-full w-full object-contain p-2"
+                      />
+                    ) : (
+                      <span className="text-3xl">
+                        🌾
+                      </span>
+                    )}
+                  </Link>
+
+                  {/* ITEM DETAILS */}
+                  <div className="flex flex-1 flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between gap-2">
+                        <h3 className="font-semibold">
+                          {i.name}
+                        </h3>
+
+                        <p className="font-bold">
+                          ₹{i.qty * i.price}
+                        </p>
+                      </div>
+
+                      <p className="text-xs text-gray-500">
+                        ₹{i.price}/kg
                       </p>
+
+                      <p className="text-xs text-green-700">
+                        🚚 Delivery:{" "}
+                        {dateText(i.deliveryDays)}
+                      </p>
+
+                      {/* Farmer delivery failure */}
+                      {results[i._id]?.ok === false && (
+                        <p className="mt-1 text-xs font-medium text-red-600">
+                          ❌ Kisan{" "}
+                          {results[i._id].reason}
+                        </p>
+                      )}
                     </div>
 
-                    <p className="text-xs text-gray-500">
-                      ₹{i.price}/kg
-                    </p>
+                    {/* QUANTITY */}
+                    <div className="mt-2 flex items-center justify-between">
+                      <div className="flex items-center rounded-lg bg-green-600 text-white">
+                        <button
+                          onClick={() => dec(i._id)}
+                          className="px-3 py-1 text-lg font-bold"
+                        >
+                          −
+                        </button>
 
-                    <p className="text-xs text-green-700">
-                      🚚 Delivery:{" "}
-                      {dateText(i.deliveryDays)}
-                    </p>
+                        <span className="min-w-14 text-center text-sm font-bold">
+                          {i.qty} kg
+                        </span>
 
-                    {/* Farmer delivery failure */}
-                    {results[i._id]?.ok === false && (
-                      <p className="mt-1 text-xs font-medium text-red-600">
-                        ❌ Kisan{" "}
-                        {results[i._id].reason}
+                        <button
+                          onClick={() =>
+                            add({
+                              _id: i._id,
+                              name: i.name,
+                              retailPrice: i.price,
+                              images: [i.image],
+                              quantity: i.stock,
+                              deliveryDays:
+                                i.deliveryDays,
+                            })
+                          }
+                          disabled={i.qty >= i.stock}
+                          className="px-3 py-1 text-lg font-bold disabled:opacity-40"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      <button
+                        onClick={() => remove(i._id)}
+                        className="text-xs font-medium text-red-600"
+                      >
+                        Hatao
+                      </button>
+                    </div>
+
+                    {i.qty >= i.stock && (
+                      <p className="mt-1 text-xs text-red-600">
+                        Itna hi stock hai ({i.stock} kg)
                       </p>
                     )}
                   </div>
-
-                  <div className="mt-2 flex items-center justify-between">
-                    <div className="flex items-center rounded-lg bg-green-600 text-white">
-                      <button
-                        onClick={() => dec(i._id)}
-                        className="px-3 py-1 text-lg font-bold"
-                      >
-                        −
-                      </button>
-
-                      <span className="min-w-14 text-center text-sm font-bold">
-                        {i.qty} kg
-                      </span>
-
-                      <button
-                        onClick={() =>
-                          add({
-                            _id: i._id,
-                            name: i.name,
-                            retailPrice: i.price,
-                            images: [i.image],
-                            quantity: i.stock,
-                            deliveryDays:
-                              i.deliveryDays,
-                          })
-                        }
-                        disabled={i.qty >= i.stock}
-                        className="px-3 py-1 text-lg font-bold disabled:opacity-40"
-                      >
-                        +
-                      </button>
-                    </div>
-
-                    <button
-                      onClick={() => remove(i._id)}
-                      className="text-xs font-medium text-red-600"
-                    >
-                      Hatao
-                    </button>
-                  </div>
-
-                  {i.qty >= i.stock && (
-                    <p className="mt-1 text-xs text-red-600">
-                      Itna hi stock hai ({i.stock} kg)
-                    </p>
-                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </section>
         </div>
 
-        {/* Right: Bill + Payment */}
+        {/* RIGHT: BILL + PAYMENT */}
         <aside className="h-fit space-y-4 lg:sticky lg:top-20">
+
+          {/* Bill */}
           <section className="rounded-xl border bg-white p-4 shadow-sm">
             <h2 className="mb-2 font-bold">
               Bill
@@ -465,6 +529,7 @@ export default function Cart() {
                 <span className="text-gray-600">
                   Crops ka total
                 </span>
+
                 <span>₹{total}</span>
               </div>
 
@@ -472,6 +537,7 @@ export default function Cart() {
                 <span className="text-gray-600">
                   Delivery charge
                 </span>
+
                 <span
                   className={
                     deliveryFee === 0
@@ -522,6 +588,7 @@ export default function Cart() {
                 <p className="text-sm font-semibold">
                   💵 Pay on Delivery
                 </p>
+
                 <p className="text-xs text-gray-600">
                   Maal milne par cash ya UPI se do
                 </p>
@@ -533,6 +600,7 @@ export default function Cart() {
             </p>
           </section>
 
+          {/* Error */}
           {error && (
             <p className="rounded bg-red-50 p-2 text-sm text-red-600">
               {error}
@@ -545,11 +613,13 @@ export default function Cart() {
               <p className="font-semibold">
                 ❌ Delivery available nahi
               </p>
+
               <p className="mt-1 text-xs">
                 {blocked.length} crop
                 {blocked.length > 1 ? "s" : ""} aapke
                 pincode par deliver nahi ho sakta.
               </p>
+
               <p className="mt-1 text-xs">
                 Crop hatao ya delivery pincode badlo.
               </p>
@@ -579,6 +649,7 @@ export default function Cart() {
           <p className="text-xs text-gray-500">
             Kul rakam
           </p>
+
           <p className="text-lg font-extrabold">
             ₹{grand}
           </p>
