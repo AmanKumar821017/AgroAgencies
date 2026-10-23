@@ -118,7 +118,7 @@ export default function BusinessHome() {
         
 
         {/* Hero Content */}
-        <div className="relative z-10 flex min-h-[320px] items-center p-5 text-white sm:min-h-[360px] sm:p-8">
+        <div className="relative z-10 flex min-h-[320px] items-center p-5 text-green-800 sm:min-h-[360px] sm:p-8">
           <div className="max-w-2xl">
             <p className="text-sm font-medium opacity-90 sm:text-base">
               Namaste, {user?.name} 🙏
