@@ -115,7 +115,7 @@ export default function BusinessHome() {
         />
 
         {/* Dark/Green Overlay */}
-        <div className="absolute inset-0 bg-green-900/45"></div>
+        
 
         {/* Hero Content */}
         <div className="relative z-10 flex min-h-[320px] items-center p-5 text-white sm:min-h-[360px] sm:p-8">
